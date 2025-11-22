@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { api } from "../../convex/_generated/api";
 import { useQuery, useMutation } from "convex/react";
-import * as fm from "@/components/fastmail";
 import Link from "next/link";
 
 export default function Home() {

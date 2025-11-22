@@ -1,3 +1,4 @@
+"use client";
 import { api } from "../../../../convex/_generated/api";
 import { useQuery, useMutation } from "convex/react";
 import { Id } from "../../../../convex/_generated/dataModel";
