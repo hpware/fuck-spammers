@@ -4,7 +4,7 @@ import { v } from "convex/values";
 export const getEmails = internalAction({
   args: {},
   handler: async (ctx) => {
-    const getEmails = await
+    //const getEmails = await
   },
 });
 
