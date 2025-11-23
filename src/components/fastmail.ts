@@ -5,15 +5,23 @@ export async function getSession(token: string) {
     },
   });
   const res = await req.json();
-  console.log(res);
+  return res;
 }
 
-export async function masterApi(token: string, data: any) {
+export async function masterApi(token: string, data: string) {
   const req = await fetch("https://api.fastmail.com/jmap/api/", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: data,
   });
+  try {
+    const res = req.json();
+    return res;
+  } catch (e) {
+    const res = req.text();
+    return res;
+  }
 }

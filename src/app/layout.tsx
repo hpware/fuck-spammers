@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import ConvexP from "./ConvexProvider";
+import Link from "next/link";
 
-const geistSans = Geist({
+const openSans = Open_Sans({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Fuck Email spam",
+  title: "f**k email spam",
   description:
-    "Do YOU want your spam listed here? Email: ed26d955-4d32-4ba3-9747-9935868d1e01@yhw.tw",
+    "Do YOU want your spam listed here? Email: john.nation@cf.yhw.tw to get YOUR spam here! (prob will use AI to check long term, for now humans to go!)",
 };
 
 export default function RootLayout({
@@ -26,10 +22,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ConvexP>{children}</ConvexP>
+      <body className={`${openSans.variable} antialiased`}>
+        <ConvexP>
+          {children}
+          <div className="flex flex-col justify-center text-center">
+            <span className="text-sm">
+              This website is built around Fastmail's JMAP api & Convex.
+            </span>
+            <span className="text-sm">
+              &copy; {new Date().getUTCFullYear()}{" "}
+              <Link href="https://github.com/hpware">Howard</Link>
+            </span>
+          </div>
+        </ConvexP>
       </body>
     </html>
   );

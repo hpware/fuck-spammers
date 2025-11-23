@@ -1,16 +1,15 @@
 import { cronJobs } from "convex/server";
 import { internal } from "./_generated/api";
 
-const cron = cronJobs();
+const crons = cronJobs();
 
-cron.daily(
+crons.daily(
   "Get Emails from Fastmail in 'Shit stuff' folder",
   {
     hourUTC: 16,
-    minuteUTC: 0,
+    minuteUTC: 00,
   },
   internal.email.getEmails,
-  {},
 );
 
-export default cron;
+export default crons;

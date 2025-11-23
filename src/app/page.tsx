@@ -8,14 +8,14 @@ export default function Home() {
   const data = useQuery(api.email.getDBEmails);
   return (
     <div>
-      {JSON.stringify(data)}
-      <div>
-        <span>This website is built around Fastmail's JMAP api.</span>
-        <span>
-          &copy; {new Date().getUTCFullYear()}{" "}
-          <Link href="https://github.com/hpware">Howard</Link>
-        </span>
-      </div>
+      {data?.map((i: any) => (
+        <Link href={`/email/${i.messageId}`}>
+          <div className="flex flex-col border-2 m-1 p-1">
+            <span className="text-lg">{i.title}</span>
+            <span>{i.previewText}</span>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
