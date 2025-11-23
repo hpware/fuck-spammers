@@ -13,7 +13,7 @@ export default function Home() {
       </div>
       {data?.map((i: any) => (
         <Link href={`/email/${i.messageId}`} key={i._id}>
-          <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] border-stone-700">
+          <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] border-stone-700 hover:border-teal-100 transition-all duration-100">
             <span className="text-lg">{i.title}</span>
             <span>{i.previewText}</span>
           </div>
