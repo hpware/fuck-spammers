@@ -7,7 +7,7 @@ crons.daily(
   "Get Emails from Fastmail in 'Shit stuff' folder",
   {
     hourUTC: 16,
-    minuteUTC: 00,
+    minuteUTC: 0,
   },
   internal.email.getEmails,
 );
