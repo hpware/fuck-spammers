@@ -68,6 +68,7 @@ export const getEmails = internalAction({
                 "bodyValues",
                 "threadId",
                 "preview",
+                "from",
               ],
             },
             "getEmailInfo",
@@ -84,6 +85,7 @@ export const getEmails = internalAction({
         )
         .replace(emailRegex, "[REDACTED]"),
       previewText: i.preview.replace(emailRegex, "[REDACTED]"),
+      sender: i.from[0].email,
     }));
 
     await ctx.runMutation(internal.email.upsertEmails, { emails });
@@ -98,6 +100,7 @@ export const upsertEmails = internalMutation({
         subject: v.string(),
         emailText: v.string(),
         previewText: v.string(),
+        sender: v.string(),
       }),
     ),
   },
@@ -114,6 +117,7 @@ export const upsertEmails = internalMutation({
           title: i.subject,
           emailText: i.emailText,
           previewText: i.previewText,
+          sender: i.sender,
         });
       }
     }

@@ -7,6 +7,7 @@ export default defineSchema({
     title: v.string(),
     emailText: v.string(),
     previewText: v.string(),
+    sender: v.string(),
   }).index("messageId", ["messageId"]),
   /**  syncCheckpoint: defineTable({
   updated_at: v.string(),
