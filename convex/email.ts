@@ -45,7 +45,7 @@ export const getEmails = internalAction({
                 inMailbox:
                   getShitStuffEmailInboxId.methodResponses[0][1].ids[0],
               },
-              sort: [{ property: "receivedAt", isAscending: false }],
+              sort: [{ property: "receivedAt", isAscending: true }],
               position: 0,
               calculateTotal: true,
             },
@@ -127,7 +127,7 @@ export const upsertEmails = internalMutation({
 export const getDBEmails = query({
   args: {},
   handler: async (ctx) => {
-    return ctx.db.query("email").collect();
+    return ctx.db.query("email").order("desc").collect();
   },
 });
 
