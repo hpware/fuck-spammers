@@ -5,8 +5,12 @@ export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const download = searchParams.get("dl") === "1" ? true : false;
   const emails = await fetchQuery(api.email.getDBEmailAdderesses);
+  if (!(emails !== undefined && emails !== null)) {
+    return new Response("No emails found", { status: 404 });
+  }
   return new Response(
-    emails.map((email: string) => `${email.sender}\n`),
+    // @ts-ignore
+    emails?.map((email: string) => `${email.sender}\n`),
     {
       headers: {
         "Content-Type": "text/plain",
