@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
   }
   return new Response(
     // @ts-ignore
-    emails?.map((email: string) => `${email.sender.replace(",", "")}\n`),
+    emails?.map((email: string) => `${email.sender}\n`).replaceAll(",", ""),
     {
       headers: {
         "Content-Type": "text/plain",
