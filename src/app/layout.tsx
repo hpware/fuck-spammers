@@ -7,6 +7,8 @@ import Link from "next/link";
 const openSans = Open_Sans({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // Prevent FOIT (Flash of Invisible Text)
+  preload: true,
 });
 
 export const metadata: Metadata = {
