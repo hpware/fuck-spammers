@@ -3,6 +3,7 @@ import {
   mutation,
   internalAction,
   internalMutation,
+  internalQuery,
 } from "./_generated/server";
 import { v } from "convex/values";
 import * as FM from "@/components/fastmail";
@@ -138,5 +139,12 @@ export const getDBEmail = query({
       .query("email")
       .filter((q) => q.eq(q.field("messageId"), args.id))
       .collect();
+  },
+});
+
+export const getDBEmailAdderesses = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("email").collect();
   },
 });

@@ -21,6 +21,14 @@ export default function Home() {
     <div className="justify-center flex flex-col items-center">
       <div className="flex flex-col border-2 m-1 p-1 max-w-[400px] w-full text-center border-stone-700">
         <span className="text-xl py-2">Emails</span>
+        <div className="flex flex-row justify-center">
+          <Link
+            href="/getEmail.txt?dl=1"
+            className="hover:text-teal-100 transition-colors duration-100"
+          >
+            Block their emails!
+          </Link>
+        </div>
       </div>
       {isLoading ? (
         // Show skeleton loaders while data is loading
