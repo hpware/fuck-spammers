@@ -148,3 +148,22 @@ export const getDBEmailAdderesses = query({
     return await ctx.db.query("email").collect();
   },
 });
+
+export const getMostUsedDomains = query({
+  args: {},
+  handler: async (ctx) => {
+    const emails = await ctx.db.query("email").collect();
+    const domainCounts: Record<string, number> = {};
+
+    for (const email of emails) {
+      const domain = email.sender.split("@")[1]?.toLowerCase();
+      if (domain) {
+        domainCounts[domain] = (domainCounts[domain] || 0) + 1;
+      }
+    }
+
+    return Object.entries(domainCounts)
+      .map(([domain, count]) => ({ domain, count }))
+      .sort((a, b) => b.count - a.count);
+  },
+});
