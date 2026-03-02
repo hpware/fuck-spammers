@@ -1,8 +1,8 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function Page() {
+function CheckDestContent() {
   const [allowLinkToBeClicked, setAllowLinkToBeClicked] = useState(false);
   const [timer, setTimer] = useState(5);
   const params = useSearchParams();
@@ -78,5 +78,13 @@ export default function Page() {
         </span>
       )}
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <CheckDestContent />
+    </Suspense>
   );
 }
