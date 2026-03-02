@@ -12,9 +12,9 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "f**k email spam",
+  title: "fuck email spam & cold emails",
   description:
-    "Do YOU want your spam listed here? Email: john.nation@cf.yhw.tw to get YOUR spam here! (prob will use AI to check long term, for now humans to go!)",
+    "Cold emails suck, wastes my inbox & time. So, this website displays them, hey at least those wasted space are used up to power this site eh",
 };
 
 export default function RootLayout({
@@ -33,9 +33,16 @@ export default function RootLayout({
                 This website is built around Fastmail's JMAP api & Convex.
               </span>
               <span className="text-sm">
+                This website is{" "}
+                <Link href="https://github.com/hpware/fuck-spammers">
+                  open source
+                </Link>
+                !
+              </span>
+              <span className="text-sm">
                 &copy; {new Date().getUTCFullYear()}{" "}
                 <Link href="https://github.com/hpware">Howard</Link>
-              </span>{" "}
+              </span>
             </div>
           </div>
         </ConvexP>

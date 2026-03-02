@@ -8,16 +8,13 @@ export const GET = async (req: NextRequest) => {
   if (!(emails !== undefined && emails !== null)) {
     return new Response("No emails found", { status: 404 });
   }
-  return new Response(
-    // @ts-ignore
-    emails?.map((email: string) => `${email.sender}\n`).replaceAll(",", ""),
-    {
-      headers: {
-        "Content-Type": "text/plain",
-        ...(download && {
-          "Content-Disposition": "attachment; filename=email.txt",
-        }),
-      },
+  const uniqueSenders = [...new Set(emails.map((email) => email.sender))];
+  return new Response(uniqueSenders.join("\n"), {
+    headers: {
+      "Content-Type": "text/plain",
+      ...(download && {
+        "Content-Disposition": "attachment; filename=email.txt",
+      }),
     },
-  );
+  });
 };

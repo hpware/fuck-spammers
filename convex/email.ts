@@ -8,6 +8,7 @@ import {
 import { v } from "convex/values";
 import * as FM from "@/components/fastmail";
 import * as parser from "@/components/parser";
+import DOMPurify from "dompurify";
 import { internal } from "./_generated/api";
 
 export const getEmails = internalAction({
@@ -86,6 +87,10 @@ export const getEmails = internalAction({
         )
         .replace(emailRegex, "[REDACTED]"),
       previewText: i.preview.replace(emailRegex, "[REDACTED]"),
+      emailHTML: String(i.bodyValues?.[1]?.value || i.bodyValues?.[2]?.value)
+        .replace(emailRegex, "[REDACTED]")
+        .replaceAll("https://", "/check_dest?goto=https://")
+        .replaceAll("http://", "/check_dest?goto=http://"),
       sender: i.from[0].email,
     }));
 
@@ -101,6 +106,7 @@ export const upsertEmails = internalMutation({
         subject: v.string(),
         emailText: v.string(),
         previewText: v.string(),
+        emailHTML: v.string(),
         sender: v.string(),
       }),
     ),
@@ -118,6 +124,7 @@ export const upsertEmails = internalMutation({
           title: i.subject,
           emailText: i.emailText,
           previewText: i.previewText,
+          emailHTML: i.emailHTML,
           sender: i.sender,
         });
       }

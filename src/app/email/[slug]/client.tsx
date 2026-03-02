@@ -2,6 +2,8 @@
 import { api } from "../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
+import { useState } from "react";
+import dompurify from "dompurify";
 
 // Skeleton component for loading state
 function EmailDetailSkeleton() {
@@ -12,6 +14,9 @@ function EmailDetailSkeleton() {
           <Link href="/">Go back</Link>
         </span>
         <div className="h-6 bg-stone-700 rounded w-3/4 mx-auto mb-2 animate-pulse"></div>
+      </div>
+      <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 animate-pulse">
+        <div className="h-4 bg-stone-700 rounded w-full mb-2"></div>{" "}
       </div>
       <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 animate-pulse">
         <div className="h-4 bg-stone-700 rounded w-full mb-2"></div>
@@ -25,6 +30,7 @@ function EmailDetailSkeleton() {
 
 export default function Client({ slug }: { slug: string }) {
   const data = useQuery(api.email.getDBEmail, { id: slug });
+  const [userMode, setUserMode] = useState<"text" | "html">("text");
   const isLoading = data === undefined;
   const email = data?.[0];
 
@@ -53,8 +59,26 @@ export default function Client({ slug }: { slug: string }) {
         </span>
         <span className="text-xl pb-2">Title: {email.title}</span>
       </div>
+      <button
+        className="border-2 m-1 p-2 w-[400px] border-stone-700 hover:border-stone-500 disabled:cursor-not-allowed disabled:text-red-400"
+        onClick={() => setUserMode(userMode === "html" ? "text" : "html")}
+        disabled={email.emailHTML === undefined}
+      >
+        {userMode === "html" ? "Render as Text" : "Render as HTML"}
+      </button>
       <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] border-stone-700">
-        <span className="whitespace-pre-wrap">{email.emailText}</span>
+        {userMode === "text" ? (
+          <span className="whitespace-pre-wrap">{email.emailText}</span>
+        ) : (
+          email.emailHTML !== undefined && (
+            <div
+              className="*:text-white!"
+              dangerouslySetInnerHTML={{
+                __html: dompurify.sanitize(email.emailHTML),
+              }}
+            ></div>
+          )
+        )}
       </div>
     </div>
   );
