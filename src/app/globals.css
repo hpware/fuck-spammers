@@ -1,29 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  /* Optimize color scheme switching */
-  color-scheme: light dark;
+  /* Original color scheme — black bg, stone borders, teal accent */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #111110;
+  --card-foreground: #ededed;
+  --popover: #111110;
+  --popover-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0a;
+  --secondary: #292524;       /* stone-800 */
+  --secondary-foreground: #ededed;
+  --muted: #292524;           /* stone-800 */
+  --muted-foreground: #a8a29e; /* stone-400 */
+  --accent: #292524;
+  --accent-foreground: #ededed;
+  --destructive: #ef4444;
+  --destructive-foreground: #ededed;
+  --border: #44403c;          /* stone-700 */
+  --input: #44403c;
+  --ring: #ccfbf1;            /* teal-100 — the hover accent */
+  --radius: 0rem;             /* keep the sharp square corners from original */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-/* Critical styles for fast initial render */
 html {
-  /* Prevent layout shifts */
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,33 +61,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
-  /* Prevent content jump on scrollbar appearance */
   overflow-y: scroll;
-  /* Optimize text rendering */
   line-height: 1.5;
 }
 
-/* Improve link performance with hardware acceleration */
 a {
   text-decoration: none;
   transition: color 0.1s ease;
 }
 
-/* Optimized animation for skeleton loading */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

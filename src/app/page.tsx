@@ -3,13 +3,17 @@ import { api } from "../../convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function EmailSkeleton() {
   return (
-    <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 animate-pulse">
-      <div className="h-5 bg-stone-700 rounded w-3/4 mb-2"></div>
-      <div className="h-4 bg-stone-700 rounded w-full"></div>
-    </div>
+    <Card className="m-1 w-full max-w-[480px]">
+      <CardHeader>
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-full mt-1" />
+      </CardHeader>
+    </Card>
   );
 }
 
@@ -42,25 +46,28 @@ export default function Home() {
   const isLoading = status === "LoadingFirstPage";
 
   return (
-    <div className="justify-center flex flex-col items-center">
-      <div className="flex flex-col border-2 m-1 p-1 max-w-[400px] w-full text-center border-stone-700">
-        <span className="text-xl py-2">Emails</span>
-        <div className="flex flex-row justify-center space-x-1 flex-wrap gap-y-1">
-          <Link
-            href="/most-used-domains"
-            className="hover:text-teal-100 transition-colors duration-100"
-          >
-            Spammers fav domains!
-          </Link>
-          |{" "}
-          <Link
-            href="/rss.xml"
-            className="hover:text-teal-100 transition-colors duration-100"
-          >
-            RSS Feed
-          </Link>
-        </div>
-      </div>
+    <div className="flex flex-col items-center py-4 px-2">
+      <Card className="w-full max-w-[480px] m-1">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Emails</CardTitle>
+          <div className="flex flex-row justify-center gap-3 flex-wrap text-sm text-muted-foreground pt-1">
+            <Link
+              href="/most-used-domains"
+              className="hover:text-foreground transition-colors"
+            >
+              Spammers&apos; fav domains
+            </Link>
+            <span>·</span>
+            <Link
+              href="/rss.xml"
+              className="hover:text-foreground transition-colors"
+            >
+              RSS Feed
+            </Link>
+          </div>
+        </CardHeader>
+      </Card>
+
       {isLoading ? (
         <>
           <EmailSkeleton />
@@ -68,22 +75,33 @@ export default function Home() {
           <EmailSkeleton />
         </>
       ) : results.length === 0 ? (
-        <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 text-center">
-          <span className="text-stone-400">No emails found</span>
-        </div>
+        <Card className="w-full max-w-[480px] m-1">
+          <CardHeader className="text-center">
+            <CardDescription>No emails found</CardDescription>
+          </CardHeader>
+        </Card>
       ) : (
         <>
           {results.map((i: any, index: number) => (
-            <Link href={`/email/${i.messageId}`} key={i._id} prefetch={true}>
-              <div
-                className={`flex flex-col border-2 m-1 p-2 max-w-[400px] border-stone-700 hover:border-teal-100 transition-colors duration-100 ${results.length === index && "mb-0"}`}
+            <Link
+              href={`/email/${i.messageId}`}
+              key={i._id}
+              prefetch={true}
+              className="w-full max-w-[480px]"
+            >
+              <Card
+                className={`m-1 hover:border-ring transition-colors duration-150 ${results.length - 1 === index ? "mb-0" : ""}`}
               >
-                <span className="text-lg">{i.title}</span>
-                <span>{i.previewText}</span>
-              </div>
+                <CardHeader>
+                  <CardTitle className="text-base font-medium">
+                    {i.title}
+                  </CardTitle>
+                  <CardDescription>{i.previewText}</CardDescription>
+                </CardHeader>
+              </Card>
             </Link>
           ))}
-          <div ref={bottomRef} className="h-4 w-full max-w-[400px]" />
+          <div ref={bottomRef} className="h-4 w-full max-w-[480px]" />
           {status === "LoadingMore" && (
             <>
               <EmailSkeleton />
