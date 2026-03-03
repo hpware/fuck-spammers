@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useState } from "react";
 import dompurify from "dompurify";
 
+function decodeHTMLEntities(text: string): string {
+  const doc = new DOMParser().parseFromString(text, "text/html");
+  return doc.body.textContent ?? text;
+}
+
 // Skeleton component for loading state
 function EmailDetailSkeleton() {
   return (
@@ -68,7 +73,9 @@ export default function Client({ slug }: { slug: string }) {
       </button>
       <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] border-stone-700">
         {userMode === "text" ? (
-          <span className="whitespace-pre-wrap">{email.emailText}</span>
+          <span className="whitespace-pre-wrap break-all">
+            {decodeHTMLEntities(email.emailText)}
+          </span>
         ) : (
           email.emailHTML !== undefined && (
             <div

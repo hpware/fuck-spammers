@@ -18,11 +18,16 @@ export function htmlToPlainText(html: string): string {
   // This is a best-effort fallback; consider using a library for production.
   const stripped = html.replace(/<\/?[^>]+(>|$)/g, " ");
   return stripped
+    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16)),
+    )
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
     .replace(/&#39;/g, "'")
     .replace(/\s+/g, " ")
     .trim();

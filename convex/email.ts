@@ -6,6 +6,7 @@ import {
   internalQuery,
 } from "./_generated/server";
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import * as FM from "@/components/fastmail";
 import * as parser from "@/components/parser";
 import DOMPurify from "dompurify";
@@ -136,6 +137,13 @@ export const getDBEmails = query({
   args: {},
   handler: async (ctx) => {
     return ctx.db.query("email").order("desc").collect();
+  },
+});
+
+export const getDBEmailsPaginated = query({
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    return ctx.db.query("email").order("desc").paginate(args.paginationOpts);
   },
 });
 

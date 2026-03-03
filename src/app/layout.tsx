@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   title: "fuck email spam & cold emails",
   description:
     "Cold emails suck, wastes my inbox & time. So, this website displays them, hey at least those wasted space are used up to power this site eh",
+  alternates: {
+    types: {
+      "application/rss+xml": "/rss.xml",
+    },
+  },
 };
 
 export default function RootLayout({
