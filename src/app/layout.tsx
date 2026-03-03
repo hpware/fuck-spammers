@@ -29,11 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${openSans.variable} antialiased bg-background text-foreground`}>
+      <body
+        className={`${openSans.variable} antialiased bg-background text-foreground`}
+      >
         <ConvexP>
           {children}
           <div className="flex flex-col justify-center align-middle text-center items-center">
-            <div className="flex flex-col border border-border bg-card rounded-lg m-1 p-3 max-w-[400px] w-full justify-center align-middle text-center items-center gap-1">
+            <div className="flex flex-col border border-border bg-card rounded-lg m-1 p-3 max-w-[560px] w-full justify-center align-middle text-center items-center gap-1">
               <span className="text-sm text-muted-foreground">
                 Built with Fastmail&apos;s JMAP api &amp; Convex.
               </span>
