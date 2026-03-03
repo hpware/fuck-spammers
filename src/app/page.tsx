@@ -1,10 +1,23 @@
 "use client";
 import { api } from "../../convex/_generated/api";
-import { usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Holds an active Convex subscription for an email so the data is in cache
+// before the user navigates. Renders nothing — purely for prefetching.
+function EmailDataPrefetcher({ messageId }: { messageId: string }) {
+  useQuery(api.email.getDBEmail, { id: messageId });
+  return null;
+}
 
 function EmailSkeleton() {
   return (
@@ -18,6 +31,7 @@ function EmailSkeleton() {
 }
 
 export default function Home() {
+  const router = useRouter();
   const { results, status, loadMore } = usePaginatedQuery(
     api.email.getDBEmailsPaginated,
     {},
@@ -25,6 +39,10 @@ export default function Home() {
   );
 
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Grows monotonically — once an email is hovered its prefetcher stays mounted,
+  // keeping the Convex subscription alive until the user navigates.
+  const [prefetchedIds, setPrefetchedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -43,10 +61,24 @@ export default function Home() {
     return () => observer.disconnect();
   }, [status, loadMore]);
 
+  const handleEmailHover = useCallback(
+    (messageId: string) => {
+      if (prefetchedIds.has(messageId)) return;
+      router.prefetch(`/email/${messageId}`);
+      setPrefetchedIds((prev) => new Set([...prev, messageId]));
+    },
+    [router, prefetchedIds],
+  );
+
   const isLoading = status === "LoadingFirstPage";
 
   return (
     <div className="flex flex-col items-center py-4 px-2">
+      {/* Hidden Convex data prefetchers — one per hovered email */}
+      {[...prefetchedIds].map((id) => (
+        <EmailDataPrefetcher key={id} messageId={id} />
+      ))}
+
       <Card className="w-full max-w-[480px] m-1">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Emails</CardTitle>
@@ -54,6 +86,7 @@ export default function Home() {
             <Link
               href="/most-used-domains"
               className="hover:text-foreground transition-colors"
+              onMouseEnter={() => router.prefetch("/most-used-domains")}
             >
               Spammers&apos; fav domains
             </Link>
@@ -86,8 +119,9 @@ export default function Home() {
             <Link
               href={`/email/${i.messageId}`}
               key={i._id}
-              prefetch={true}
+              prefetch={false}
               className="w-full max-w-[480px]"
+              onMouseEnter={() => handleEmailHover(i.messageId)}
             >
               <Card
                 className={`m-1 hover:border-ring transition-colors duration-150 ${results.length - 1 === index ? "mb-0" : ""}`}

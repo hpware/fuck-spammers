@@ -2,6 +2,7 @@
 import { api } from "../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -23,6 +24,7 @@ function DomainSkeleton() {
 }
 
 export default function Client() {
+  const router = useRouter();
   const data = useQuery(api.email.getMostUsedDomains);
   const isLoading = data === undefined;
 
@@ -34,6 +36,7 @@ export default function Client() {
           <Link
             href="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            onMouseEnter={() => router.prefetch("/")}
           >
             ← Go back
           </Link>

@@ -3,6 +3,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import dompurify from "dompurify";
 import {
   Card,
@@ -39,6 +40,7 @@ function EmailDetailSkeleton() {
 }
 
 export default function Client({ slug }: { slug: string }) {
+  const router = useRouter();
   const data = useQuery(api.email.getDBEmail, { id: slug });
   const [userMode, setUserMode] = useState<"text" | "html">("text");
   const isLoading = data === undefined;
@@ -56,6 +58,7 @@ export default function Client({ slug }: { slug: string }) {
             <Link
               href="/"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              onMouseEnter={() => router.prefetch("/")}
             >
               ← Go back
             </Link>
