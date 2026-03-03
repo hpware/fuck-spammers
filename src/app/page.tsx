@@ -90,7 +90,7 @@ export default function Home() {
               className="w-full max-w-[480px]"
             >
               <Card
-                className={`m-1 hover:border-ring transition-colors duration-150 ${results.length === index && "mb-0"}`}
+                className={`m-1 hover:border-ring transition-colors duration-150 ${results.length - 1 === index ? "mb-0" : ""}`}
               >
                 <CardHeader>
                   <CardTitle className="text-base font-medium">

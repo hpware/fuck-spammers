@@ -11,6 +11,22 @@ function CheckDestContent() {
   const params = useSearchParams();
 
   const goto = params.get("goto");
+  const isInvalid =
+    !goto || (!goto.startsWith("http://") && !goto.startsWith("https://"));
+
+  useEffect(() => {
+    if (isInvalid) return;
+    const timeoutId = setTimeout(() => {
+      setAllowLinkToBeClicked(true);
+    }, 5000);
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => prevTimer - 1);
+    }, 1000);
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(interval);
+    };
+  }, [isInvalid]);
 
   if (!goto) {
     return (
@@ -53,17 +69,6 @@ function CheckDestContent() {
       </div>
     );
   }
-
-  // waiter
-  useEffect(() => {
-    setTimeout(() => {
-      setAllowLinkToBeClicked(true);
-    }, 5000);
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => prevTimer - 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="flex flex-col items-center py-4 px-2 gap-2">
