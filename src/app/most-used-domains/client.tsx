@@ -2,13 +2,23 @@
 import { api } from "../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function DomainSkeleton() {
   return (
-    <div className="flex flex-row justify-between border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 animate-pulse">
-      <div className="h-5 bg-stone-700 rounded w-3/4"></div>
-      <div className="h-5 bg-stone-700 rounded w-8"></div>
-    </div>
+    <Card className="w-full max-w-[480px] m-1">
+      <CardContent className="pt-4 flex justify-between items-center">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-5 w-10 rounded-full" />
+      </CardContent>
+    </Card>
   );
 }
 
@@ -17,18 +27,19 @@ export default function Client() {
   const isLoading = data === undefined;
 
   return (
-    <div className="justify-center flex flex-col items-center">
-      <div className="flex flex-col border-2 m-1 p-1 max-w-[400px] w-full text-center border-stone-700">
-        <span className="text-xl py-2">Most Used Domains</span>
-        <span className="pb-2 text-stone-400">
+    <div className="flex flex-col items-center py-4 px-2">
+      <Card className="w-full max-w-[480px] m-1">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Most Used Domains</CardTitle>
           <Link
             href="/"
-            className="hover:text-teal-100 transition-colors duration-100"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Go back
+            ← Go back
           </Link>
-        </span>
-      </div>
+        </CardHeader>
+      </Card>
+
       {isLoading ? (
         <>
           <DomainSkeleton />
@@ -36,18 +47,19 @@ export default function Client() {
           <DomainSkeleton />
         </>
       ) : data?.length === 0 ? (
-        <div className="flex flex-col border-2 m-1 p-2 max-w-[400px] w-full border-stone-700 text-center">
-          <span className="text-stone-400">No domains found</span>
-        </div>
+        <Card className="w-full max-w-[480px] m-1">
+          <CardContent className="pt-4 text-center text-muted-foreground text-sm">
+            No domains found
+          </CardContent>
+        </Card>
       ) : (
         data?.map((item) => (
-          <div
-            key={item.domain}
-            className="flex flex-row justify-between border-2 m-1 p-2 max-w-[400px] w-full border-stone-700"
-          >
-            <span className="text-lg">{item.domain}</span>
-            <span className="text-stone-400">{item.count}</span>
-          </div>
+          <Card key={item.domain} className="w-full max-w-[480px] m-1">
+            <CardContent className="pt-4 flex justify-between items-center">
+              <span className="text-sm font-mono">{item.domain}</span>
+              <Badge variant="secondary">{item.count}</Badge>
+            </CardContent>
+          </Card>
         ))
       )}
     </div>
