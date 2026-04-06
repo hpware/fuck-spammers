@@ -27,7 +27,12 @@ export const getEmails = internalAction({
             "Mailbox/query",
             {
               accountId,
-              filter: { name: "shitstuff" },
+              filter: {
+                name:
+                  process.env.NODE_ENV === "development"
+                    ? "shitstuff_dev"
+                    : "shitstuff",
+              },
               limit: 1,
             },
             "getShitStuffMailBoxInfo",
