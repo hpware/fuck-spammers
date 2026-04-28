@@ -46,7 +46,7 @@ export default function RootLayout({
               </span>
               <span className="text-sm">
                 &copy; {new Date().getUTCFullYear()}{" "}
-                <Link href="https://github.com/hpware">Howard</Link>
+                <Link href="https://github.com/hpware">Howard</Link> | <Link href="/legal">Legal</Link>
               </span>
             </div>
           </div>
