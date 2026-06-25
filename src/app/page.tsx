@@ -46,13 +46,17 @@ export default function Home() {
       <div className="flex flex-col border-2 m-1 p-1 max-w-[400px] w-full text-center border-stone-700">
         <span className="text-xl py-2">Emails</span>
         <div className="flex flex-row justify-center space-x-1 flex-wrap gap-y-1">
-          <Link
-            href="/most-used-domains"
-            className="hover:text-teal-100 transition-colors duration-100"
-          >
-            Spammers fav domains!
-          </Link>
-          |{" "}
+          {process.env.NEXT_PUBLIC_DISPLAY_DOMAINS === "true" ? (
+            <>
+              <Link
+                href="/most-used-domains"
+                className="hover:text-teal-100 transition-colors duration-100"
+              >
+                Domains used
+              </Link>{" "}
+              |{" "}
+            </>
+          ) : null}
           <Link
             href="/rss.xml"
             className="hover:text-teal-100 transition-colors duration-100"
