@@ -18,6 +18,9 @@ export const getEmails = internalAction({
     const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
     const getUserInfo = await FM.getSession(process.env.FASTMAIL_TOKEN!);
     const accountId = getUserInfo.primaryAccounts["urn:ietf:params:jmap:mail"];
+    if (process.env.FASTMAIL_INBOX_NAME === undefined) {
+      throw new Error("FASTMAIL_INBOX_NAME is not defined in the environment.");
+    }
     const getShitStuffEmailInboxId = await FM.masterApi(
       process.env.FASTMAIL_TOKEN!,
       JSON.stringify({
@@ -27,7 +30,7 @@ export const getEmails = internalAction({
             "Mailbox/query",
             {
               accountId,
-              filter: { name: "shitstuff" },
+              filter: { name: process.env.FASTMAIL_INBOX_NAME! },
               limit: 1,
             },
             "getShitStuffMailBoxInfo",
