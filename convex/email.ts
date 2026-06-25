@@ -97,8 +97,30 @@ export const getEmails = internalAction({
         .replaceAll("http://", "/check_dest?goto=http://"),
       sender: i.from[0].email,
     }));
-
     await ctx.runMutation(internal.email.upsertEmails, { emails });
+    // throw emails into junk
+    await FM.masterApi(
+      process.env.FASTMAIL_TOKEN!,
+      JSON.stringify({
+        using: ["urn:ietf:params:jmap:core", "urn:ietf:params:jmap:mail"],
+        methodCalls: [
+          [
+            "Email/set",
+            {
+              accountId,
+              update: {
+                "email-id-to-move": {
+                  mailboxIds: {
+                    "junk-mailbox-id": true,
+                  },
+                },
+              },
+            },
+            "deleteEmails",
+          ],
+        ],
+      }),
+    );
   },
 });
 
