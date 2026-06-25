@@ -11,9 +11,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar, SenderName } from "@/components/sidebar";
 
-// Holds an active Convex subscription for an email so the data is in cache
-// before the user navigates. Renders nothing — purely for prefetching.
 function EmailDataPrefetcher({ messageId }: { messageId: string }) {
   useQuery(api.email.getDBEmail, { id: messageId });
   return null;
@@ -21,7 +20,7 @@ function EmailDataPrefetcher({ messageId }: { messageId: string }) {
 
 function EmailSkeleton() {
   return (
-    <Card className="m-1 w-full max-w-[480px]">
+    <Card className="w-full">
       <CardHeader>
         <Skeleton className="h-5 w-3/4" />
         <Skeleton className="h-4 w-full mt-1" />
@@ -39,9 +38,6 @@ export default function Home() {
   );
 
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  // Grows monotonically — once an email is hovered its prefetcher stays mounted,
-  // keeping the Convex subscription alive until the user navigates.
   const [prefetchedIds, setPrefetchedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -54,10 +50,7 @@ export default function Home() {
       { threshold: 0.1 },
     );
 
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current);
-    }
-
+    if (bottomRef.current) observer.observe(bottomRef.current);
     return () => observer.disconnect();
   }, [status, loadMore]);
 
@@ -73,78 +66,63 @@ export default function Home() {
   const isLoading = status === "LoadingFirstPage";
 
   return (
-    <div className="flex flex-col items-center py-4 px-2">
-      {/* Hidden Convex data prefetchers — one per hovered email */}
+    <div className="flex min-h-screen">
+      <Sidebar />
+
       {[...prefetchedIds].map((id) => (
         <EmailDataPrefetcher key={id} messageId={id} />
       ))}
 
-      <Card className="w-full max-w-[480px] m-1">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Emails</CardTitle>
-          <div className="flex flex-row justify-center gap-3 flex-wrap text-sm text-muted-foreground pt-1">
-            <Link
-              href="/most-used-domains"
-              className="hover:text-foreground transition-colors"
-              onMouseEnter={() => router.prefetch("/most-used-domains")}
-            >
-              Spammers&apos; fav domains
-            </Link>
-            <span>·</span>
-            <Link
-              href="/rss.xml"
-              className="hover:text-foreground transition-colors"
-            >
-              RSS Feed
-            </Link>
+      <main className="flex-1 py-4 px-4">
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <EmailSkeleton key={i} />
+            ))}
           </div>
-        </CardHeader>
-      </Card>
-
-      {isLoading ? (
-        <>
-          <EmailSkeleton />
-          <EmailSkeleton />
-          <EmailSkeleton />
-        </>
-      ) : results.length === 0 ? (
-        <Card className="w-full max-w-[480px] m-1">
-          <CardHeader className="text-center">
-            <CardDescription>No emails found</CardDescription>
-          </CardHeader>
-        </Card>
-      ) : (
-        <>
-          {results.map((i: any, index: number) => (
-            <Link
-              href={`/email/${i.messageId}`}
-              key={i._id}
-              prefetch={false}
-              className="w-full max-w-[480px]"
-              onMouseEnter={() => handleEmailHover(i.messageId)}
-            >
-              <Card
-                className={`m-1 hover:border-ring transition-colors duration-150 ${results.length - 1 === index ? "mb-0" : ""}`}
-              >
-                <CardHeader>
-                  <CardTitle className="text-base font-medium">
-                    {i.title}
-                  </CardTitle>
-                  <CardDescription>{i.previewText}</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          ))}
-          <div ref={bottomRef} className="h-4 w-full max-w-[480px]" />
-          {status === "LoadingMore" && (
-            <>
-              <EmailSkeleton />
-              <EmailSkeleton />
-              <EmailSkeleton />
-            </>
-          )}
-        </>
-      )}
+        ) : results.length === 0 ? (
+          <Card className="max-w-[480px]">
+            <CardHeader>
+              <CardDescription>No emails found</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {results.map((i: any) => (
+                <Link
+                  href={`/email/${i.messageId}`}
+                  key={i._id}
+                  prefetch={false}
+                  onMouseEnter={() => handleEmailHover(i.messageId)}
+                >
+                  <Card className="h-full hover:border-ring transition-colors duration-150">
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-base font-medium">
+                          {i.title}
+                        </CardTitle>
+                        <SenderName sender={i.sender} />
+                      </div>
+                      <CardDescription className="line-clamp-2">
+                        TLDR: [{i.previewText}]
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <div ref={bottomRef} className="h-4 w-full" />
+            {status === "LoadingMore" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <EmailSkeleton key={i} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </main>
     </div>
   );
 }

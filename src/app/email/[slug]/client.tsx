@@ -1,18 +1,11 @@
 "use client";
 import { api } from "../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
-import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import dompurify from "dompurify";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar } from "@/components/sidebar";
 
 function decodeHTMLEntities(text: string): string {
   const doc = new DOMParser().parseFromString(text, "text/html");
@@ -21,79 +14,80 @@ function decodeHTMLEntities(text: string): string {
 
 function EmailDetailSkeleton() {
   return (
-    <div className="flex flex-col items-center py-4 px-2 gap-2">
-      <Card className="w-full max-w-[560px]">
-        <CardHeader>
-          <Skeleton className="h-6 w-1/2 mx-auto" />
-        </CardHeader>
-      </Card>
-      <Card className="w-full max-w-[560px]">
-        <CardContent className="pt-4 space-y-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-4/5" />
-          <Skeleton className="h-4 w-full" />
-        </CardContent>
-      </Card>
+    <div className="flex min-h-screen">
+      <Sidebar showBack showViewMore />
+      <main className="flex-1 py-4 px-6">
+        <Skeleton className="h-8 w-1/3 mb-4" />
+        <Skeleton className="h-5 w-1/4 mb-2" />
+        <Skeleton className="h-4 w-full mt-6" />
+        <Skeleton className="h-4 w-5/6 mt-2" />
+        <Skeleton className="h-4 w-4/5 mt-2" />
+      </main>
     </div>
   );
 }
 
 export default function Client({ slug }: { slug: string }) {
-  const router = useRouter();
   const data = useQuery(api.email.getDBEmail, { id: slug });
   const [userMode, setUserMode] = useState<"text" | "html">("text");
   const isLoading = data === undefined;
   const email = data?.[0];
 
-  if (isLoading) {
-    return <EmailDetailSkeleton />;
-  }
+  if (isLoading) return <EmailDetailSkeleton />;
 
   if (!email) {
     return (
-      <div className="flex flex-col items-center py-4 px-2">
-        <Card className="w-full max-w-[560px]">
-          <CardHeader className="text-center">
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              onMouseEnter={() => router.prefetch("/")}
-            >
-              ← Go back
-            </Link>
-            <CardTitle className="text-destructive">Email not found</CardTitle>
-          </CardHeader>
-        </Card>
+      <div className="flex min-h-screen">
+        <Sidebar showBack showViewMore />
+        <main className="flex-1 py-4 px-6">
+          <h1 className="text-2xl font-bold text-destructive">
+            Email not found
+          </h1>
+        </main>
       </div>
     );
   }
 
+  const senderName = email.sender.split("@")[0] ?? email.sender;
+  const senderDomain = email.sender.split("@")[1] ?? "";
+
   return (
-    <div className="flex flex-col items-center py-4 px-2 gap-2">
-      <Card className="w-full max-w-[560px]">
-        <CardHeader className="text-center">
-          <Link
-            href="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+    <div className="flex min-h-screen">
+      <Sidebar showBack showViewMore />
+
+      <main className="flex-1 py-4 px-6 max-w-3xl">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">{email.title}</h1>
+            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+              <span className="inline-flex items-center justify-center w-8 h-8 border border-border text-base">
+                @
+              </span>
+              <div>
+                <div className="text-foreground">{senderName}</div>
+                <div>Using Domain: {senderDomain}</div>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() =>
+              setUserMode(userMode === "html" ? "text" : "html")
+            }
+            disabled={email.emailHTML === undefined}
+            title={userMode === "html" ? "Display as Text" : "Display as HTML"}
           >
-            ← Go back
-          </Link>
-          <CardTitle>{email.title}</CardTitle>
-        </CardHeader>
-      </Card>
+            {userMode === "html" ? (
+              <span className="text-xs font-mono">Aa</span>
+            ) : (
+              <span className="text-sm font-mono">&lt;/&gt;</span>
+            )}
+          </Button>
+        </div>
 
-      <Button
-        variant="outline"
-        className="w-full max-w-[560px]"
-        onClick={() => setUserMode(userMode === "html" ? "text" : "html")}
-        disabled={email.emailHTML === undefined}
-      >
-        {userMode === "html" ? "Render as Text" : "Render as HTML"}
-      </Button>
-
-      <Card className="w-full max-w-[560px]">
-        <CardContent className="pt-4">
+        <div className="mt-6">
           {userMode === "text" ? (
             <span className="whitespace-pre-wrap break-all text-sm">
               {decodeHTMLEntities(email.emailText)}
@@ -108,8 +102,8 @@ export default function Client({ slug }: { slug: string }) {
               />
             )
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </main>
     </div>
   );
 }
