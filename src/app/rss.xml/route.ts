@@ -4,6 +4,12 @@ import { fetchQuery } from "convex/nextjs";
 
 export const dynamic = "force-dynamic";
 
+// Email titles/previews come from untrusted spam emails. A value containing
+// "]]>" would close the CDATA section early and inject arbitrary XML into the
+// feed, so wrap it safely.
+const cdata = (value: string) =>
+  `<![CDATA[${value.replaceAll("]]>", "]]]]><![CDATA[>")}]]>`;
+
 export const GET = async (req: NextRequest) => {
   const emails = await fetchQuery(api.email.getDBEmailAdderesses);
   if (!emails) {
@@ -15,10 +21,10 @@ export const GET = async (req: NextRequest) => {
   const items = emails
     .map(
       (email) => `    <item>
-      <title><![CDATA[${email.title}]]></title>
-      <link>${baseUrl}/email/${email.messageId}</link>
-      <guid isPermaLink="true">${baseUrl}/email/${email.messageId}</guid>
-      <description><![CDATA[${email.previewText}]]></description>
+      <title>${cdata(email.title)}</title>
+      <link>${baseUrl}/email/${encodeURIComponent(email.messageId)}</link>
+      <guid isPermaLink="true">${baseUrl}/email/${encodeURIComponent(email.messageId)}</guid>
+      <description>${cdata(email.previewText)}</description>
       <pubDate>${new Date(email._creationTime).toUTCString()}</pubDate>
     </item>`,
     )
